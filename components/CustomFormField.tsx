@@ -13,6 +13,8 @@ import {
 import { Input } from "@/components//ui/input";
 import { Control } from "react-hook-form";
 import { FormFieldType } from "./forms/PatientForm";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
 
 interface CustomProps {
   control: Control<any>;
@@ -32,21 +34,44 @@ interface CustomProps {
 const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
   const { fieldType, iconSrc, iconAlt, placeholder } = props;
 
-  switch (fieldType) {
+  switch (props.fieldType) {
     case FormFieldType.INPUT:
       return (
         <div className="flex rounded-md border border-dark-500 bg-dark-400">
-          {iconSrc && (
+          {props.iconSrc && (
             <Image
-              src={iconSrc}
+              src={props.iconSrc}
               height={24}
               width={24}
-              alt={iconAlt || "icon"}
+              alt={props.iconAlt || "icon"}
               className="ml-2"
             />
           )}
+          <FormControl>
+            <Input
+              placeholder={props.placeholder}
+              {...field}
+              className="shad-input border-0"
+            />
+          </FormControl>
         </div>
       );
+    case FormFieldType.PHONE_INPUT:
+      return (
+        <FormControl>
+          <PhoneInput
+            defaultCountry="IN"
+            placeholder={props.placeholder}
+            international
+            withCountryCallingCode
+            value={field.value}
+            onChange={field.onChange}
+            className="input-phone"
+          />
+        </FormControl>
+      );
+    default:
+      break;
   }
 };
 
@@ -55,7 +80,7 @@ const CustomFormField = (props: CustomProps) => {
   return (
     <FormField
       control={control}
-      name="username"
+      name={name}
       render={({ field }) => (
         <FormItem>
           {fieldType !== FormFieldType.CHECKBOX && label && (
