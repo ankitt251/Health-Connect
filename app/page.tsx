@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import PatientForm from "../components/forms/PatientForm";
-import { Link } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (

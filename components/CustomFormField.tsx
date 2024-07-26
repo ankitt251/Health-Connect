@@ -93,28 +93,28 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
           />
         </FormControl>
       );
-    case FormFieldType.DATE_PICKER:
-      return (
-        <div className="flex rounded-md border border-dark-500 bg-dark-400">
-          <Image
-            src="/assets/icons/calendar.svg"
-            height={24}
-            width={24}
-            alt="calendar"
-            className="ml-2"
-          />
-          <FormControl>
-            <DatePicker
-              selected={field.value}
-              onChange={(date) => field.onChange(date)}
-              dateFormat={dateFormat ?? "MM/dd/yyyy"}
-              showTimeSelect={showTimeSelect ?? false}
-              timeInputLabel="Time:"
-              wrapperClassName="date-picker"
+      case FormFieldType.DATE_PICKER:
+        return (
+          <div className="flex rounded-md border border-dark-500 bg-dark-400">
+            <Image
+              src="/assets/icons/calendar.svg"
+              height={24}
+              width={24}
+              alt="user"
+              className="ml-2"
             />
-          </FormControl>
-        </div>
-      );
+            <FormControl>
+              <ReactDatePicker
+                showTimeSelect={props.showTimeSelect ?? false}
+                selected={field.value}
+                onChange={(date) => field.onChange(date)}
+                timeInputLabel="Time:"
+                dateFormat={props.dateFormat ?? "MM/dd/yyyy"}
+                wrapperClassName="date-picker"
+              />
+            </FormControl>
+          </div>
+        );
     case FormFieldType.SELECT:
       return (
         <FormControl>
