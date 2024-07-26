@@ -27,17 +27,19 @@ export const PatientFormDefaultValues = {
 };
 
 export const IdentificationTypes = [
-  "Birth Certificate",
+  "Aadhaar Card",
+  "PAN Card",
   "Driver's License",
+  "Voter ID Card",
+  "Passport",
+  "Social Security Card",
+  "Birth Certificate",
   "Medical Insurance Card/Policy",
   "Military ID Card",
-  "National Identity Card",
-  "Passport",
-  "Resident Alien Card (Green Card)",
-  "Social Security Card",
-  "State ID Card",
+  "Ration Card",
   "Student ID Card",
-  "Voter ID Card",
+  "National Population Register (NPR) Smart Card",
+  "Employee ID Card",
 ];
 
 export const Doctors = [
