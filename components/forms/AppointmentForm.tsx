@@ -3,32 +3,32 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { SelectItem } from "@/components/ui/select";
 import { Doctors } from "@/constants";
+import { createAppointment } from "@/lib/actions/appointment.actions";
+import { getAppointmentSchema } from "@/lib/validation";
+import { Appointment } from "@/types/appwrite.types";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import { Form } from "@/components/ui/form";
-import CustomFormField from "../CustomFormField";
+import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
-import { getAppointmentSchema } from "@/lib/validation";
-import "react-phone-number-input/style.css";
-import { FormFieldType } from "./PatientForm";
-import { createAppointment } from "@/lib/actions/appointment.actions";
-import { Appointment } from "@/types/appwrite.types";
+import { Form } from "../ui/form";
 
 export const AppointmentForm = ({
   userId,
   patientId,
-  type,
+  type = "create",
+  appointment,
 }: {
   userId: string;
   patientId: string;
-  type: "create" | "cancel" | "schedule";
+  type: "create" | "schedule" | "cancel";
+  appointment?: Appointment;
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -83,10 +83,14 @@ export const AppointmentForm = ({
           router.push(
             `/patients/${userId}/new-appointment/success?appointmentId=${newAppointment.$id}`
           );
-        }}} catch (error) {
+        }
+      }
+    } catch (error) {
       console.log(error);
     }
-      setIsLoading(false);
+    setIsLoading(false);
+    console.log("button clicked");
+    //console.log(userId);
   };
   let buttonLabel;
   switch (type) {
@@ -99,7 +103,6 @@ export const AppointmentForm = ({
     case "schedule":
       buttonLabel = "Schedule Appointment";
       break;
-
     default:
       break;
   }
@@ -120,7 +123,7 @@ export const AppointmentForm = ({
               control={form.control}
               name="primaryPhysician"
               label="Doctor"
-              placeholder="Select a Doctor"
+              placeholder="Select a doctor"
             >
               {Doctors.map((doctor, i) => (
                 <SelectItem key={doctor.name + i} value={doctor.name}>
@@ -129,7 +132,7 @@ export const AppointmentForm = ({
                       src={doctor.image}
                       width={32}
                       height={32}
-                      alt={doctor.name}
+                      alt="doctor"
                       className="rounded-full border border-dark-500"
                     />
                     <p>{doctor.name}</p>
@@ -146,20 +149,28 @@ export const AppointmentForm = ({
               showTimeSelect
               dateFormat="MM/dd/yyyy  -  h:mm aa"
             />
-            <div className="flex flex-col gap-6 xl:flex-row">
+
+            <div
+              className={`flex flex-col gap-6  ${
+                type === "create" && "xl:flex-row"
+              }`}
+            >
               <CustomFormField
                 fieldType={FormFieldType.TEXTAREA}
                 control={form.control}
                 name="reason"
-                label="Reason for appointment"
-                placeholder="Enter reason for appointment"
+                label="Appointment reason"
+                placeholder="Annual montly check-up"
+                disabled={type === "schedule"}
               />
+
               <CustomFormField
                 fieldType={FormFieldType.TEXTAREA}
                 control={form.control}
                 name="note"
-                label="Notes"
-                placeholder="Enter notes"
+                label="Comments/notes"
+                placeholder="Prefer afternoon appointments, if possible"
+                disabled={type === "schedule"}
               />
             </div>
           </>
@@ -167,11 +178,11 @@ export const AppointmentForm = ({
 
         {type === "cancel" && (
           <CustomFormField
-            fieldType={FormFieldType.PHONE_INPUT}
+            fieldType={FormFieldType.TEXTAREA}
             control={form.control}
             name="cancellationReason"
             label="Reason for cancellation"
-            placeholder="Enter reason for cancellation"
+            placeholder="Urgent meeting came up"
           />
         )}
 
