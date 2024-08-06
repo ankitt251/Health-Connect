@@ -1,33 +1,17 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import StatusBadge from "../StatusBadge";
-import { formatDateTime } from "@/lib/utils";
 import Image from "next/image";
+
 import { Doctors } from "@/constants";
+import { formatDateTime } from "@/lib/utils";
+import { Appointment } from "@/types/appwrite.types";
+
 import AppointmentModal from "../AppointmentModal";
+import StatusBadge from "../StatusBadge";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Payment = {
-  patient: any;
-  id: string;
-  amount: number;
-  status: "scheduled" | "pending" | "cancelled";
-  email: string;
-};
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Appointment>[] = [
   {
     header: "ID",
     cell: ({ row }) => <p className="text-14-medium">{row.index + 1}</p>,
@@ -43,9 +27,12 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      <div className="min-w-[115px]">
-        <StatusBadge status={row.original.status} />
-      </div>;
+      const appointment = row.original;
+      return (
+        <div className="min-w-[115px]">
+          <StatusBadge status={appointment.status} />
+        </div>
+      );
     },
   },
   {
@@ -83,9 +70,20 @@ export const columns: ColumnDef<Payment>[] = [
   {
     id: "actions",
     header: () => <div className="pl-4">Actions</div>,
-    cell: ({ row }) => {
+    cell: ({ row:{original: data} }) => {
       return <div className="flex gap-1">
-        <AppointmentModal />
+        <AppointmentModal 
+          type="schedule"
+          patientId = {data.patient.$id}
+          userId = {data.userId}
+          appointment = {data}
+           />
+        <AppointmentModal 
+          type="cancel"
+          patientId = {data.patient.$id}
+          userId = {data.userId}
+          appointment = {data}
+          />
       </div>;
     },
   },
